@@ -14,14 +14,18 @@ subdirs = \
 	core/security \
 	core/smtp \
 	core/zip \
-	core/zip/MiniZip
+	core/zip/MiniZip \
+	async/imap \
+	async/nntp \
+	async/pop \
+	async/smtp \
+	java java/native
 includes = \
 	$(CURRENT_DIR)/../include \
     $(CTEMPLATE_PATH)/include \
     $(ICU4C_PATH)/include \
     $(LIBETPAN_PATH)/include \
     $(LIBXML2_PATH)/include \
-    $(UCHARDET_PATH)/include \
     $(TIDY_HTML5_PATH)/include \
     $(OPENSSL_PATH)/include \
     $(ANDROID_NDK)/sources/cxx-stl/llvm-libc++/libcxx/include \
@@ -49,6 +53,7 @@ async_imap_src_files := $(wildcard $(src_dir)/async/imap/*.cpp)
 async_nntp_src_files := $(wildcard $(src_dir)/async/nntp/*.cpp)
 async_pop_src_files := $(wildcard $(src_dir)/async/pop/*.cpp)
 async_smtp_src_files := $(wildcard $(src_dir)/async/smtp/*.cpp)
+jni_src_files := $(wildcard $(src_dir)/java/native/*.cpp) $(wildcard $(src_dir)/java/*.cpp)
 
 # include $(CLEAR_VARS)
 # LOCAL_MODULE    := MailCore
@@ -87,11 +92,6 @@ LOCAL_SRC_FILES := $(LIBXML2_PATH)/libs/$(TARGET_ARCH_ABI)/libxml2.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := uchardet
-LOCAL_SRC_FILES := $(UCHARDET_PATH)/libs/$(TARGET_ARCH_ABI)/libuchardet.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE    := tidy
 LOCAL_SRC_FILES := $(TIDY_HTML5_PATH)/libs/$(TARGET_ARCH_ABI)/libtidy.a
 include $(PREBUILT_STATIC_LIBRARY)
@@ -109,7 +109,9 @@ include $(PREBUILT_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE    := MailCore
 LOCAL_C_INCLUDES := $(includes)
-LOCAL_SRC_FILES := $(core_src_files) $(abstract_src_files) $(imap_src_files) $(nntp_src_files) \
+LOCAL_SRC_FILES := \
+	$(jni_src_files) \
+	$(core_src_files) $(abstract_src_files) $(imap_src_files) $(nntp_src_files) \
 	$(pop_src_files) $(provider_src_files) $(renderer_src_files) $(rfc822_src_files) \
 	$(security_src_files) $(smtp_src_files) $(zip_src_files) $(minizip_src_files) \
 	$(async_imap_src_files) $(async_nntp_src_files) $(async_pop_src_files) $(async_smtp_src_files)
@@ -117,5 +119,5 @@ LOCAL_CPPFLAGS := -frtti
 LOCAL_CFLAGS := -DNOCRYPT
 LOCAL_LDLIBS := -lz -llog \
 	 -lc++_shared -L$(ANDROID_NDK)/sources/cxx-stl/llvm-libc++/libs/$(TARGET_ARCH_ABI)
-LOCAL_STATIC_LIBRARIES := etpan sasl2 ssl crypto icu4c xml2 uchardet tidy ctemplate
+LOCAL_STATIC_LIBRARIES := etpan sasl2 ssl crypto icu4c xml2 tidy ctemplate
 include $(BUILD_SHARED_LIBRARY)

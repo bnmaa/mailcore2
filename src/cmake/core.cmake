@@ -7,6 +7,7 @@ set(abstract_files
   core/abstract/MCAbstractPart.cpp
   core/abstract/MCAddress.cpp
   core/abstract/MCMessageHeader.cpp
+  core/abstract/MCErrorMessage.cpp
 )
 
 IF(APPLE)
@@ -16,6 +17,15 @@ IF(APPLE)
     core/basetypes/MCObjectMac.mm
     core/basetypes/MCDataMac.mm
     core/rfc822/MCMessageParserMac.mm
+  )
+
+  set(zip_files_apple
+    core/zip/MCZipMac.mm
+  )
+
+  set(core_includes_apple
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/basetypes/icu-ucsdet"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/basetypes/icu-ucsdet/include"
   )
 ENDIF()
 
@@ -55,6 +65,33 @@ set(basetypes_files
   ${basetypes_files_linux}
 )
 
+IF(APPLE)
+  set(icu_ucsdet_files
+    core/basetypes/icu-ucsdet/cmemory.c
+    core/basetypes/icu-ucsdet/csdetect.cpp
+    core/basetypes/icu-ucsdet/csmatch.cpp
+    core/basetypes/icu-ucsdet/csr2022.cpp
+    core/basetypes/icu-ucsdet/csrecog.cpp
+    core/basetypes/icu-ucsdet/csrmbcs.cpp
+    core/basetypes/icu-ucsdet/csrsbcs.cpp
+    core/basetypes/icu-ucsdet/csrucode.cpp
+    core/basetypes/icu-ucsdet/csrutf8.cpp
+    core/basetypes/icu-ucsdet/cstring.c
+    core/basetypes/icu-ucsdet/inputext.cpp
+    core/basetypes/icu-ucsdet/uarrsort.c
+    core/basetypes/icu-ucsdet/ucln_cmn.cpp
+    core/basetypes/icu-ucsdet/ucln_in.cpp
+    core/basetypes/icu-ucsdet/ucsdet.cpp
+    core/basetypes/icu-ucsdet/udataswp.c
+    core/basetypes/icu-ucsdet/uenum.c
+    core/basetypes/icu-ucsdet/uinvchar.c
+    core/basetypes/icu-ucsdet/umutex.cpp
+    core/basetypes/icu-ucsdet/uobject.cpp
+    core/basetypes/icu-ucsdet/ustring.cpp
+    core/basetypes/icu-ucsdet/utrace.c
+  )
+ENDIF()
+
 set(imap_files
   core/imap/MCIMAPFolder.cpp
   core/imap/MCIMAPFolderStatus.cpp
@@ -84,6 +121,8 @@ set(provider_files
   core/provider/MCMailProvider.cpp
   core/provider/MCMailProvidersManager.cpp
   core/provider/MCNetService.cpp
+  core/provider/MCAccountValidator.cpp
+  core/provider/MCMXRecordResolverOperation.cpp
 )
 
 set(renderer_files
@@ -114,6 +153,7 @@ set(zip_files
   core/zip/MiniZip/ioapi.c
   core/zip/MiniZip/unzip.c
   core/zip/MiniZip/zip.c
+  ${zip_files_apple}
 )
 
 set(security_files
@@ -122,6 +162,7 @@ set(security_files
 
 set(core_files
   ${basetypes_files}
+  ${icu_ucsdet_files}
   ${abstract_files}
   ${imap_files}
   ${pop_files}
@@ -139,6 +180,7 @@ set(core_includes
   "${CMAKE_CURRENT_SOURCE_DIR}/core"
   "${CMAKE_CURRENT_SOURCE_DIR}/core/abstract"
   "${CMAKE_CURRENT_SOURCE_DIR}/core/basetypes"
+  ${core_includes_apple}
   "${CMAKE_CURRENT_SOURCE_DIR}/core/imap"
   "${CMAKE_CURRENT_SOURCE_DIR}/core/pop"
   "${CMAKE_CURRENT_SOURCE_DIR}/core/nntp"

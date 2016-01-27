@@ -321,10 +321,10 @@ MCO_OBJC_SYNTHESIZE_SCALAR(dispatch_queue_t, dispatch_queue_t, setDispatchQueue,
                                                       uids:(MCOIndexSet *)uids
                                                     modSeq:(uint64_t)modSeq
 {
-    IMAPFetchMessagesOperation * coreOp = MCO_NATIVE_INSTANCE->syncMessagesByUID([folder mco_mcString],
-                                                                                 (IMAPMessagesRequestKind) requestKind,
-                                                                                 MCO_FROM_OBJC(IndexSet, uids),
-                                                                                 modSeq);
+    IMAPFetchMessagesOperation * coreOp = MCO_NATIVE_INSTANCE->syncMessagesByUIDOperation([folder mco_mcString],
+                                                                                          (IMAPMessagesRequestKind) requestKind,
+                                                                                          MCO_FROM_OBJC(IndexSet, uids),
+                                                                                          modSeq);
     return MCO_TO_OBJC_OP(coreOp);
 }
 
@@ -433,6 +433,11 @@ MCO_OBJC_SYNTHESIZE_SCALAR(dispatch_queue_t, dispatch_queue_t, setDispatchQueue,
                                                                                                    (Encoding) encoding,
                                                                                                    urgent);
     return MCO_TO_OBJC_OP(coreOp);
+}
+
+- (MCOIMAPCustomCommandOperation *) customCommandOperation:(NSString *)command {
+    IMAPCustomCommandOperation *customOp = MCO_NATIVE_INSTANCE->customCommand([command mco_mcString], false);
+    return MCO_TO_OBJC_OP(customOp);
 }
 
 - (MCOIMAPFetchContentOperation *) fetchMessageAttachmentOperationWithFolder:(NSString *)folder

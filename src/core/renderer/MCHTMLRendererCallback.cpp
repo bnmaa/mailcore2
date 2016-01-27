@@ -15,6 +15,14 @@
 
 using namespace mailcore;
 
+HTMLRendererTemplateCallback::HTMLRendererTemplateCallback()
+{
+}
+
+HTMLRendererTemplateCallback::~HTMLRendererTemplateCallback()
+{
+}
+
 mailcore::HashMap * HTMLRendererTemplateCallback::templateValuesForHeader(mailcore::MessageHeader * header)
 {
     mailcore::HashMap * result = mailcore::HashMap::hashMap();
@@ -280,4 +288,8 @@ bool HTMLRendererTemplateCallback::canPreviewPart(AbstractPart * part)
 bool HTMLRendererTemplateCallback::shouldShowPart(AbstractPart * part)
 {
     return true;
+}
+
+void HTMLRendererTemplateCallback::setMixedTextAndAttachmentsModeEnabled(bool enabled)
+{
 }

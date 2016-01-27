@@ -5,6 +5,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#include "MCDefines.h"
 #include "MCAttachment.h"
 #include "MCMessageHeader.h"
 #include "MCHTMLRenderer.h"
@@ -72,6 +73,11 @@ void MessageParser::setBytes(char * dataBytes, unsigned int dataLength)
     mailmessage_free(msg);
 }
 
+MessageParser::MessageParser()
+{
+    init();
+}
+
 MessageParser::MessageParser(Data * data)
 {
     init();
@@ -118,7 +124,9 @@ String * MessageParser::description()
     String * result = String::string();
     result->appendUTF8Format("<%s:%p ", MCUTF8(className()), this);
     result->appendUTF8Format("<%p>", mMainPart);
-    result->appendString(mMainPart->description());
+    if (mMainPart != NULL) {
+        result->appendString(mMainPart->description());
+    }
     result->appendUTF8Characters(">");
     
     return result;
@@ -133,6 +141,15 @@ HashMap * MessageParser::serializable()
     return result;
 }
 
+void MessageParser::importSerializable(HashMap * serializable)
+{
+    AbstractMessage::importSerializable(serializable);
+    MC_SAFE_REPLACE_RETAIN(AbstractPart, mMainPart, Object::objectWithSerializable((HashMap *) serializable->objectForKey(MCSTR("mainPart"))));
+    if (mMainPart != NULL) {
+        mMainPart->applyUniquePartID();
+    }
+}
+
 Object * MessageParser::copy()
 {
     return new MessageParser(this);
@@ -140,11 +157,17 @@ Object * MessageParser::copy()
 
 AbstractPart * MessageParser::partForContentID(String * contentID)
 {
+    if (mainPart() == NULL) {
+        return NULL;
+    }
     return mainPart()->partForContentID(contentID);
 }
 
 AbstractPart * MessageParser::partForUniqueID(String * uniqueID)
 {
+    if (mainPart() == NULL) {
+        return NULL;
+    }
     return mainPart()->partForUniqueID(uniqueID);
 }
 
@@ -176,4 +199,14 @@ String * MessageParser::plainTextBodyRendering(bool stripWhitespace)
         plainTextBodyString = plainTextBodyString->stripWhitespace();
     }
     return plainTextBodyString;
+}
+
+static void * createObject()
+{
+    return new MessageParser();
+}
+
+INITIALIZE(MessageParser)
+{
+    Object::registerObjectConstructor("mailcore::MessageParser", &createObject);
 }
